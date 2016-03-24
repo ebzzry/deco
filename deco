@@ -13,11 +13,11 @@
 (define *directories*
   (list *base-directory*))
 
-;; Directories that wp shouldn't look at
+;; Directories that we shouldn't look at
 (define *exclude-dirs*
   '("oops"))
 
-;; File extensions that wp shouldn't care about
+;; File extensions that we shouldn't care about
 (define *exclude-exts*
   '("gpg" "xcf" "psd"))
 
@@ -38,7 +38,7 @@
 
 ;; Command—arguments alist
 (define *command-flags-alist*
-  '((hsetroot   . ("-fill"))
+  '((hsetroot   . ("-full"))
     (xv         . ("-root" "-quit" "-geometry"))
     (xsetbg     . ("-fullscreen"))
     (bsetbg     . ("-full"))
@@ -165,7 +165,7 @@ Options:
 -t, --timeout secs      Set timeout before next redisplay
 -f, --force command     Use command instead of the default ~A
 
-See https://github.com/ebzzry/wp for more information
+See https://github.com/ebzzry/deco for more information
 " self *command*)))
 
 ;; Parse command-line arguments

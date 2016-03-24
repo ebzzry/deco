@@ -1,7 +1,7 @@
-wp
-==
+deco
+====
 
-This tiny [Scsh](https://scsh.net) script sets the wallpaper—the root
+This trivial [Scsh](https://scsh.net) script sets the wallpaper—the root
 window image. It features random selection, and timeouts.
 
 ## Usage
@@ -9,26 +9,26 @@ window image. It features random selection, and timeouts.
 To specify an image as a wallpaper:
 
 ```
-$ wp foobar.jpg
+$ deco foobar.jpg
 ```
 
 To select a random image, from `~/Pictures`:
 
 ```
-$ wp --random
+$ deco --random
 ```
 
 To select a random image, from `/pub/pics/wallpapers`:
 
 ```
-$ wp --random --directory /pub/pics/wallpapers
+$ deco --random --directory /pub/pics/wallpapers
 ```
 
 To select a random image, from `~/Pictures`, with a 5-minute (300
 seconds), refresh interval:
 
 ```
-$ wp --random --timeout 300
+$ deco --random --timeout 300
 ```
 
 
