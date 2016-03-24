@@ -45,7 +45,7 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
     (bsetbg . ("-full"))
     (fbsetbg . ("-f"))
     (wmsetbg . ("--maxscale"))
-    (Esetroot. ("-scale" "-fit"))))
+    (Esetroot . ("-scale" "-fit"))))
 
 ;; Custom command to set wallpaper
 (define *command* #f)
