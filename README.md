@@ -1,8 +1,8 @@
 deco
 ====
 
-This trivial [Scsh](https://scsh.net) script sets the wallpaper—the root
-window image. It features random selection, and timeouts.
+This simple [Scsh](https://scsh.net) script sets the wallpaper—the
+root window image. It features random selection, and timeouts.
 
 ## Usage
 
