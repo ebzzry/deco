@@ -40,11 +40,21 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
 (define *command-flags-alist*
   '((feh . ("--bg-fill"))
     (hsetroot . ("-full"))
+    (fbsetbg . ("-f"))
     (xv . ("-root" "-quit" "-geometry"))
     (xsetbg . ("-fullscreen"))
     (bsetbg . ("-full"))
-    (fbsetbg . ("-f"))
     (wmsetbg . ("--maxscale"))))
+
+;; Command search list
+(define *command-list*
+  '("feh"
+    "hsetroot"
+    "fbsetbg"
+    "xv"
+    "xsetbg"
+    "bsetbg"
+    "wmsetbg"))
 
 ;; Custom command to set wallpaper
 (define *command* #f)
@@ -56,22 +66,12 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
          (grep "dimensions:")
          (awk "{print $2}"))))
 
-;; List of commands for help usage
-(define *command-list*
-  '(feh
-    hsetroot
-    xv
-    xsetbg
-    bsetbg
-    fbsetbg
-    wmsetbg))
-
 ;; Get options and arguments for a wallpaper setter
 (define (get-command)
   (let* ((command (call-with-current-continuation
                    (lambda (break)
                      (for-each (lambda (cmd)
-                                 (let* ((command-string (symbol->string cmd))
+                                 (let* ((command-string cmd)
                                         (command (run/strings (which ,command-string))))
                                    (if (not (null? command))
                                        (break command-string))))
