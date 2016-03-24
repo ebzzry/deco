@@ -38,13 +38,14 @@
 
 ;; Command—arguments alist
 (define *command-flags-alist*
-  '((hsetroot   . ("-full"))
-    (xv         . ("-root" "-quit" "-geometry"))
-    (xsetbg     . ("-fullscreen"))
-    (bsetbg     . ("-full"))
-    (fbsetbg    . ("-f"))
-    (wmsetbg    . ("--maxscale"))
-    (Esetroot   . ("-scale" "-fit"))))
+  '((feh . ("--bg-fill"))
+    (hsetroot . ("-full"))
+    (xv . ("-root" "-quit" "-geometry"))
+    (xsetbg . ("-fullscreen"))
+    (bsetbg . ("-full"))
+    (fbsetbg . ("-f"))
+    (wmsetbg . ("--maxscale"))
+    (Esetroot. ("-scale" "-fit"))))
 
 ;; Custom command to set wallpaper
 (define *command* #f)
@@ -58,7 +59,8 @@
 
 ;; List of commands for help usage
 (define *command-list*
-  '(hsetroot
+  '(feh
+    hsetroot
     xv
     xsetbg
     bsetbg
