@@ -1,48 +1,62 @@
-#! /home/rmm/.nix-profile/bin/scsh \
+#! /run/current-system/sw/bin/scsh \
 -o srfi-27 -e main -s
 !#
 
+;; The custom directory to use
 (define *directory* #f)
 
+;; The default directory to get images from
 (define *base-directory*
   (string-append home-directory "/Pictures/"))
 
+;; List of directories for --random use
 (define *directories*
   (list *base-directory*))
 
+;; Directories that wp shouldn't look at
 (define *exclude-dirs*
   '("oops"))
 
+;; File extensions that wp shouldn't care about
 (define *exclude-exts*
   '("gpg" "xcf" "psd"))
 
+;; Default flags
 (define *base-flags* '())
 
+;; Extra flags
 (define *extra-flags* '())
 
+;; Default timeout for --random
 (define *timeout* #f)
 
+;; Help variable knob
 (define *help* #f)
 
+;; Random variable knob
 (define *random* #f)
 
+;; Command—arguments alist
 (define *command-flags-alist*
-  '((xv         . ("-root" "-quit" "-geometry"))
-    (fbsetbg    . ("-f"))
-    (bsetbg     . ("-full"))
-    (hsetroot   . ("-fill"))
+  '((hsetroot   . ("-fill"))
+    (xv         . ("-root" "-quit" "-geometry"))
     (xsetbg     . ("-fullscreen"))
+    (bsetbg     . ("-full"))
+    (fbsetbg    . ("-f"))
     (wmsetbg    . ("--maxscale"))
     (Esetroot   . ("-scale" "-fit"))))
 
+;; Custom command to set wallpaper
 (define *command* #f)
 
+;; Detected screen dimensions
 (define *screen-resolution*
   (run/strings
    (pipe (xdpyinfo)
          (grep "dimensions:")
          (awk "{print $2}"))))
 
+;; List of commands for help usage
 (define *command-list*
   '(hsetroot
     xv
@@ -51,6 +65,7 @@
     fbsetbg
     wmsetbg))
 
+;; Get options and arguments for a wallpaper setter
 (define (get-command)
   (let* ((command (call-with-current-continuation
                    (lambda (break)
@@ -70,12 +85,14 @@
                            *command-flags-alist*))))
     (cons command args)))
 
+;; Get command output
 (define (get-command-line binary tail)
   (cons binary
         (append (cdr (assoc (string->symbol binary)
                             *command-flags-alist*))
                 tail)))
 
+;; Run a wallpaper setter
 (define (set-command)
   (let* ((command (get-command))
          (binary (car command)))
@@ -94,12 +111,15 @@
                   ""))
                *command*))))
 
+;; Get list of setters
 (define (get-binaries)
   (set-command)
   (list (car *command*)))
 
+;; Get list of setters
 (define *binaries* (get-binaries))
 
+;; Check for existence of setters
 (define (check-binaries)
   (let ((missing #f))
     (for-each (lambda (binary)
@@ -113,6 +133,7 @@
                (format #t "Please install required programs to continue.~%")
                (exit 1)))))
 
+;; Check for existence of image directories
 (define (check-directories)
   (if (and (file-exists? *base-directory*)
            (or (file-directory? *base-directory*)
@@ -126,22 +147,28 @@
       (begin (format #t "Error: ~A does not exist.~%"
                      *base-directory*))))
 
+;; Pre-set checks
 (define (pre-run)
   (check-binaries)
   (check-directories))
 
+;; Display help usage
 (define (display-usage args)
   (let ((self (file-name-nondirectory (car args))))
     (format #t
-            "Usage: ~a [options] <image>
+            "Usage: ~a [OPTION]... <IMAGE>
+
 Options:
 -h, --help              Show this help
--r, --random            Use random image
--d, --directory dir     Specify directory for `-r' switch
+-r, --random            Use a random image
+-d, --directory dir     Specify directory for `--random'
 -t, --timeout secs      Set timeout before next redisplay
 -f, --force command     Use command instead of the default ~A
+
+See https://github.com/ebzzry/wp for more information
 " self *command*)))
 
+;; Parse command-line arguments
 (define (parse-arguments args)
   (cond ((null? args) args)
         (else (case (string->symbol (car args))
@@ -169,6 +196,7 @@ Options:
                  (parse-arguments (cdr args)))
                 (else args)))))
 
+;; Filter directory contents using exclusions
 (define (filter-directory directory)
   (let ((files (directory-files directory)))
 
@@ -189,6 +217,7 @@ Options:
                           files)))
     files))
 
+;; Get random directory inside *directory*
 (define (get-random-directory)
   (random-source-randomize! default-random-source)
   (let* ((count (length *directories*))
@@ -206,6 +235,7 @@ Options:
                  (file-directory? directory))
             directory))))
 
+;; Get random image inside *directory*
 (define (get-random-image directory)
   (random-source-randomize! default-random-source)
   (let ((files (filter-directory directory)))
@@ -218,10 +248,12 @@ Options:
               (get-random-image (file-name-as-directory path))
               path)))))
 
+;; Set the wallpaper
 (define (set-wallpaper flags image)
   (if (file-exists? image)
       (run (,@*command* ,@flags ,image))))
 
+;; Set random wallpaper
 (define (set-wallpaper-random flags directory . count)
   (set-wallpaper flags (get-random-image directory))
   (if (> (string-length (car count)) 0)
@@ -230,11 +262,13 @@ Options:
                (set-wallpaper-random flags directory
                                      (number->string timeout))))))
 
+;; Returns true if a directory is empty
 (define (directory-empty? directory)
   (if (null? (directory-files directory))
       #t
       #f))
 
+;; Top-level
 (define (main args)
   (pre-run)
   (if (not (null? (cdr args)))
