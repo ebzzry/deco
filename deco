@@ -1,5 +1,5 @@
-#! /run/current-system/sw/bin/scsh \
--o srfi-27 -e main -s
+#! /bin/sh
+exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
 !#
 
 ;; The custom directory to use
