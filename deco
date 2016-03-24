@@ -1,4 +1,5 @@
-#! /bin/sh
+#!/bin/sh
+# -*- mode: scheme -*-
 exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
 !#
 
