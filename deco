@@ -3,41 +3,44 @@
 exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
 !#
 
-;; The custom directory to use
+;;; The program version
+(define *version* "0.0.2")
+
+;;; The custom directory to use
 (define *directory* #f)
 
-;; The default directory to get images from
+;;; The default directory to get images from
 (define *base-directory*
-  (string-append home-directory "/Pictures/"))
+  (string-trim-right (run/string (xdg-user-dir "PICTURES"))))
 
-;; List of directories for --random use
+;;; List of directories for --random use
 (define *directories*
   (list *base-directory*))
 
-;; Directories that we shouldn't look at
+;;; Directories that we shouldn't look at
 (define *exclude-dirs*
   '("oops"))
 
-;; File extensions that we shouldn't care about
+;;; File extensions that we shouldn't care about
 (define *exclude-exts*
   '("gpg" "xcf" "psd"))
 
-;; Default flags
+;;; Default flags
 (define *base-flags* '())
 
-;; Extra flags
+;;; Extra flags
 (define *extra-flags* '())
 
-;; Default timeout for --random
+;;; Default timeout for --random
 (define *timeout* #f)
 
-;; Help variable knob
+;;; Help variable knob
 (define *help* #f)
 
-;; Random variable knob
+;;; Random variable knob
 (define *random* #f)
 
-;; Command—arguments alist
+;;; Command—arguments alist
 (define *command-flags-alist*
   '((feh . ("--bg-fill"))
     (hsetroot . ("-full"))
@@ -47,7 +50,7 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
     (bsetbg . ("-full"))
     (wmsetbg . ("--maxscale"))))
 
-;; Command search list
+;;; Command search list
 (define *command-list*
   '("feh"
     "hsetroot"
@@ -57,17 +60,17 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
     "bsetbg"
     "wmsetbg"))
 
-;; Custom command to set wallpaper
+;;; Custom command to set wallpaper
 (define *command* #f)
 
-;; Detected screen dimensions
+;;; Detected screen dimensions
 (define *screen-resolution*
   (run/strings
    (pipe (xdpyinfo)
          (grep "dimensions:")
          (awk "{print $2}"))))
 
-;; Get options and arguments for a wallpaper setter
+;;; Get options and arguments for a wallpaper setter
 (define (get-command)
   (let* ((command (call-with-current-continuation
                    (lambda (break)
@@ -87,14 +90,14 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
                            *command-flags-alist*))))
     (cons command args)))
 
-;; Get command output
+;;; Get command output
 (define (get-command-line binary tail)
   (cons binary
         (append (cdr (assoc (string->symbol binary)
                             *command-flags-alist*))
                 tail)))
 
-;; Run a wallpaper setter
+;;; Run a wallpaper setter
 (define (set-command)
   (let* ((command (get-command))
          (binary (car command)))
@@ -113,15 +116,15 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
                   ""))
                *command*))))
 
-;; Get list of setters
+;;; Get list of setters
 (define (get-binaries)
   (set-command)
   (list (car *command*)))
 
-;; Get list of setters
+;;; Get list of setters
 (define *binaries* (get-binaries))
 
-;; Check for existence of setters
+;;; Check for existence of setters
 (define (check-binaries)
   (let ((missing #f))
     (for-each (lambda (binary)
@@ -135,7 +138,7 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
                (format #t "Please install required programs to continue.~%")
                (exit 1)))))
 
-;; Check for existence of image directories
+;;; Check for existence of image directories
 (define (check-directories)
   (if (and (file-exists? *base-directory*)
            (or (file-directory? *base-directory*)
@@ -148,7 +151,7 @@ exec /usr/bin/env scsh -o srfi-27 -e main -s "$0" "$@"
                    (exit 1))))
       (format #t "error: ~A does not exist.~%" *base-directory*)))
 
-;; Display help usage
+;;; Display help usage
 (define (display-usage args)
   (let ((self (file-name-nondirectory (car args))))
     (format #t
@@ -164,7 +167,7 @@ Options:
 See https://github.com/ebzzry/deco for more information
 " self *command*)))
 
-;; Parse command-line arguments
+;;; Parse command-line arguments
 (define (parse-arguments args)
   (cond ((null? args) args)
         (else (case (string->symbol (car args))
@@ -192,7 +195,7 @@ See https://github.com/ebzzry/deco for more information
                  (parse-arguments (cdr args)))
                 (else args)))))
 
-;; Filter directory contents using exclusions
+;;; Filter directory contents using exclusions
 (define (filter-directory directory)
   (let ((files (directory-files directory)))
 
@@ -213,7 +216,7 @@ See https://github.com/ebzzry/deco for more information
                           files)))
     files))
 
-;; Get random directory inside *directory*
+;;; Get random directory inside *directory*
 (define (get-random-directory)
   (random-source-randomize! default-random-source)
   (let* ((count (length *directories*))
@@ -231,7 +234,7 @@ See https://github.com/ebzzry/deco for more information
                  (file-directory? directory))
             directory))))
 
-;; Get random image inside *directory*
+;;; Get random image inside *directory*
 (define (get-random-image directory)
   (random-source-randomize! default-random-source)
   (let ((files (filter-directory directory)))
@@ -244,12 +247,12 @@ See https://github.com/ebzzry/deco for more information
               (get-random-image (file-name-as-directory path))
               path)))))
 
-;; Set the wallpaper
+;;; Set the wallpaper
 (define (set-wallpaper flags image)
   (if (file-exists? image)
       (run (,@*command* ,@flags ,image))))
 
-;; Set random wallpaper
+;;; Set random wallpaper
 (define (set-wallpaper-random flags directory . count)
   (set-wallpaper flags (get-random-image directory))
   (if (> (string-length (car count)) 0)
@@ -258,13 +261,13 @@ See https://github.com/ebzzry/deco for more information
                (set-wallpaper-random flags directory
                                      (number->string timeout))))))
 
-;; Returns true if a directory is empty
+;;; Returns true if a directory is empty
 (define (directory-empty? directory)
   (if (null? (directory-files directory))
       #t
       #f))
 
-;; Top-level
+;;; Top-level
 (define (main args)
   (check-binaries)
   (if (not (null? (cdr args)))
