@@ -22,11 +22,17 @@ To set a random wallpaper from `~/Pictures/wallpapers/` every 24 hours:
 
 To set a random Wallhaven wallpaper:
 
-    curl -Ls -O -w %{url_effective} https://wallhaven.now.sh/random | xargs -I % curl -so ~/.deco %; deco ~/.deco
+    curl -Ls -O -w %{url_effective} https://wallhaven.now.sh/random \
+    | xargs -I % curl -so ~/.deco %
+    deco ~/.deco
 
 To set a random Chromecast wallpaper:
 
-    curl -s https://raw.githubusercontent.com/dconnolly/chromecast-backgrounds/master/README.md | sed -e 's/^\!\[\](\(.*\))$/\1/' | shuf -n 1 | xargs -I % curl -so ~/.deco %; deco ~/.deco
+    curl -s https://raw.githubusercontent.com/dconnolly/chromecast-backgrounds/master/README.md \
+    | sed -e 's/^\!\[\](\(.*\))$/\1/' \
+    | shuf -n 1 \
+    | xargs -I % curl -so ~/.deco %
+    deco ~/.deco
 
 To display help and options:
 
