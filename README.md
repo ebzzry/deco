@@ -1,24 +1,28 @@
 deco
 ====
 
-This is a trivial [Scsh](https://scsh.net) script that sets the the root window image, commonly
-known as the wallpaper. It features random selection and timeouts.
+This is a simple [Scsh](https://scsh.net) script that sets the the root window image, commonly known
+as the wallpaper. It features random selection and timeouts.
 
 
 Usage
 -----
 
-To specify an image as a wallpaper:
+To set `wallpaper.jpg` from the current directory as wallpaper:
 
-    deco foobar.jpg
+    deco wallpaper.jpg
 
-To select a random image from `/pub/pics/wallpapers`:
+To set a random wallpaper from `~/Pictures/wallpapers/`:
 
-    deco --random --directory /pub/pics/wallpapers
+    deco --random --directory ~/Pictures/wallpapers/
 
-To select a random image from `/pub/bil/deco/chromecast` every 24 hours:
+To set a random wallpaper from `~/Pictures/wallpapers/` every 24 hours:
 
-    deco --random --timeout 86400 --directory /pub/bil/deco/chromecast &
+    deco --random --timeout 86400 --directory ~/Pictures/wallpapers/ &
+
+To set a random wallpaper from [Wallhaven](https://alpha.wallhaven.cc/):
+
+    curl -so /tmp/wh.jpg -L https://wallhaven.now.sh/random; deco /tmp/wh.jpg; rm -f /tmp/wh.jpg
 
 To display help and options:
 
